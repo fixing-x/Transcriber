@@ -1,0 +1,31 @@
+{
+  "name": "local-speech-browser-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Client-side local speech transcription API and demo",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src/",
+    "vendor/cactus/",
+    "licenses/NEEDLE-LICENSE",
+    "licenses/WHISTLE-LICENSE",
+    "README.md",
+    "docs/API.md"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "test": "node --test",
+    "check": "node scripts/check.js",
+    "build:pages": "node scripts/build-pages.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

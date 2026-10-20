@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f2f0e8" />
+    <meta name="description" content="A browser-side speech transcription API and demo. Your microphone audio stays on your device." />
+    <title>Local Speech — browser transcription</title>
+    <link rel="stylesheet" href="./styles/app.css" />
+    <script type="module" src="./src/demo.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo</a>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Local Speech home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <span>local<span class="brand-light">speech</span></span>
+      </a>
+      <div class="topbar-right">
+        <span class="privacy-chip"><span class="privacy-dot" aria-hidden="true"></span> AUDIO STAYS ON DEVICE</span>
+        <a class="top-link" href="#api">Developer API <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      <section class="hero" id="top" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> BROWSER-SIDE TRANSCRIPTION</p>
+          <h1 id="page-title">Speech in.<br /><em>Words on screen.</em></h1>
+          <p class="hero-lede">A small JavaScript API for live transcription. Pick an on-device engine, speak, and watch the transcript build in real time.</p>
+        </div>
+        <div class="hero-note" aria-label="Processing details">
+          <span class="note-icon" aria-hidden="true">↘</span>
+          <p>No server.<br />No audio upload.<br /><strong>Just your browser.</strong></p>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Live transcription demo">
+        <div class="setup-column">
+          <div class="section-kicker"><span>SETUP</span><span class="rule"></span><span>LOCAL ENGINE</span></div>
+          <div class="setup-card">
+            <label class="field-label" for="engine-select">Speech engine</label>
+            <div class="select-wrap">
+              <select id="engine-select" name="engine">
+                <option value="chrome-local">Browser local · Chrome</option>
+                <option value="whistle-local">Whistle · bundled WASM</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+            <label class="field-label" for="language-select">Recognition language</label>
+            <div class="select-wrap">
+              <select id="language-select" name="language">
+                <option value="en-US">English (United States)</option>
+                <option value="en-GB">English (United Kingdom)</option>
+                <option value="de-DE">German</option>
+                <option value="fr-FR">French</option>
+                <option value="es-ES">Spanish</option>
+                <option value="it-IT">Italian</option>
+                <option value="nl-NL">Dutch</option>
+                <option value="pl-PL">Polish</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+            <p class="engine-note" id="engine-note">Chrome’s on-device engine is quick when its language pack is installed. Chrome may download that pack once during setup.</p>
+            <button class="button button-prepare" id="prepare-button" type="button">
+              <span class="button-symbol" aria-hidden="true">↻</span>
+              <span id="prepare-label">Prepare local engine</span>
+            </button>
+            <p class="setup-hint" id="setup-hint">Setup does not open the microphone. You decide when to start listening.</p>
+          </div>
+
+          <div class="privacy-details">
+            <span class="privacy-icon" aria-hidden="true">◎</span>
+            <div>
+              <h2>Your voice stays local</h2>
+              <p>The bundled engine runs in a WebAssembly worker. Chrome local uses the browser’s on-device speech package. Neither path sends microphone audio to this project’s server.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="transcript-column">
+          <div class="section-kicker"><span>LIVE SESSION</span><span class="rule"></span><span id="session-clock">00:00</span></div>
+          <section class="recorder-card" aria-labelledby="recorder-heading">
+            <div class="recorder-topline">
+              <div class="engine-status">
+                <span class="status-indicator" id="status-indicator" aria-hidden="true"></span>
+                <span id="state-title">Engine not prepared</span>
+              </div>
+              <span class="engine-badge" id="engine-badge">LOCAL</span>
+            </div>
+            <h2 id="recorder-heading">Your words<br /><em>will show up here.</em></h2>
+            <p class="recorder-instruction" id="state-detail">Prepare an engine, then allow microphone access when you press Start.</p>
+            <div class="recorder-controls">
+              <button class="button button-start" id="start-button" type="button" disabled>
+                <span class="mic-symbol" aria-hidden="true"><span></span></span>
+                <span>Start listening</span>
+              </button>
+              <button class="button button-stop" id="stop-button" type="button" disabled>
+                <span class="stop-symbol" aria-hidden="true"></span>
+                <span>Stop</span>
+              </button>
+            </div>
+            <p class="recording-disclosure">Microphone access starts only after you press <strong>Start listening</strong>.</p>
+          </section>
+
+          <section class="transcript-card" aria-labelledby="transcript-heading">
+            <div class="transcript-header">
+              <div>
+                <p class="eyebrow">SESSION OUTPUT</p>
+                <h2 id="transcript-heading">Transcript <span class="word-count" id="word-count">0 words</span></h2>
+              </div>
+              <div class="transcript-actions">
+                <button class="text-button" id="copy-button" type="button" disabled>Copy</button>
+                <button class="text-button" id="download-button" type="button" disabled>Save .txt</button>
+                <button class="text-button text-button-muted" id="clear-button" type="button" disabled>Clear</button>
+              </div>
+            </div>
+            <div class="transcript-body" id="transcript-body" aria-live="off" aria-label="Final transcript">
+              <p class="transcript-empty" id="transcript-empty">Final words will collect here. Interim guesses appear below until the engine confirms them.</p>
+              <p class="transcript-final" id="transcript-final"></p>
+            </div>
+            <div class="preview-row" id="preview-row" hidden>
+              <span class="preview-label">LIVE PREVIEW</span>
+              <p id="transcript-preview"></p>
+            </div>
+            <div class="transcript-foot">
+              <span><span class="foot-dot" aria-hidden="true"></span> Not saved to storage</span>
+              <span id="chunk-count">0 stable chunks</span>
+            </div>
+          </section>
+
+          <p class="error-message" id="error-message" role="alert" hidden></p>
+          <p class="sr-only" id="announcer" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+      </section>
+
+      <section class="api-section" id="api" aria-labelledby="api-heading">
+        <div class="api-copy">
+          <p class="eyebrow"><span>02</span> A SMALL CLIENT API</p>
+          <h2 id="api-heading">Wire it into<br /><em>your own app.</em></h2>
+          <p>Import the ES module from this repository, prepare a local engine, then subscribe to transcript and stable chunk updates. Nothing here requires a transcription server.</p>
+          <a class="api-link" href="./docs/API.md">Read the API contract <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="code-card">
+          <div class="code-topline"><span>ES MODULE · BROWSER</span><button class="copy-code" id="copy-code-button" type="button">Copy example</button></div>
+          <pre><code id="api-example">import { createTranscriber } from "https://YOUR-USER.github.io/YOUR-REPO/src/index.js";
+
+const finalText = document.querySelector("#final-transcript");
+const liveText = document.querySelector("#live-preview");
+const prepareButton = document.querySelector("#prepare");
+const startButton = document.querySelector("#start");
+const stopButton = document.querySelector("#stop");
+
+const speech = createTranscriber({
+  engine: "whistle-local", // or "chrome-local"
+  language: "en-US",
+});
+
+speech.on("transcript", ({ text, preview }) =&gt; {
+  finalText.textContent = text;
+  liveText.textContent = preview;
+});
+
+speech.on("chunk", ({ text, sequence }) =&gt; {
+  console.log("Stable chunk", sequence, text);
+});
+speech.on("error", ({ code, message }) =&gt; console.error(code, message));
+
+prepareButton.addEventListener("click", async () =&gt; {
+  await speech.prepare(); // call from this user action
+  startButton.disabled = false;
+});
+startButton.addEventListener("click", () =&gt; void speech.start());
+stopButton.addEventListener("click", () =&gt; void speech.stop());
+</code></pre>
+          <p class="code-footnote">For a production app, serve the Whistle module, worker, WASM, and model files from the same origin as your app.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>LOCAL SPEECH · BROWSER TRANSCRIPTION</span>
+      <span>Audio stays on device. Clear the page to clear the session.</span>
+    </footer>
+  </body>
+</html>
